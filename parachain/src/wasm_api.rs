@@ -16,6 +16,9 @@
 
 //! Utilities for writing parachain WASM.
 
+/*
+用于编写parachain WASM的实用程序
+*/
 use codec::{Encode, Decode};
 use super::{ValidationParams, ValidationResult, MessageRef};
 

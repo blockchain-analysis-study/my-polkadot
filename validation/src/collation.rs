@@ -113,6 +113,9 @@ impl<C: Collators, P: ProvideRuntimeApi> Future for CollationFetch<C, P>
 				try_ready!(poll)
 			};
 
+			/*
+			有效的  收集人
+			*/
 			let res = validate_collation(&*self.client, &self.relay_parent, &collation);
 
 			match res {
@@ -216,6 +219,9 @@ pub fn egress_roots(outgoing: &mut [OutgoingMessage]) -> Vec<(ParaId, Hash)> {
 	egress_roots
 }
 
+/*
+检查外在数据
+*/
 fn check_extrinsic(
 	mut outgoing: Vec<OutgoingMessage>,
 	expected_egress_roots: &[(ParaId, Hash)],
@@ -268,6 +274,10 @@ struct Externalities {
 	outgoing: Vec<OutgoingMessage>,
 }
 
+
+/*
+wasm执行器
+*/
 impl wasm_executor::Externalities for Externalities {
 	fn post_message(&mut self, message: MessageRef) -> Result<(), ExternalitiesError> {
 		// TODO: https://github.com/paritytech/polkadot/issues/92

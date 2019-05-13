@@ -37,7 +37,7 @@ pub type CollatorId = ed25519::Public;
 
 /// Signature on candidate's block data by a collator.
 /*
-由 收集人 签署候选人的区块数据
+由 收集人 对候选人的区块数据的签名
 */
 pub type CollatorSignature = ed25519::Signature;
 
@@ -55,43 +55,73 @@ pub type ValidatorId = super::SessionKey;
 
 /// Index of the validator is used as a lightweight replacement of the `ValidatorId` when appropriate.
 /*
-验证人的索引在适当时用作`ValidatorId`的轻量级替换
+验证人的索引
+在适当时用作`ValidatorId`的轻量级替换
 */
 pub type ValidatorIndex = u32;
 
- /// Signature with which parachain validators sign blocks.
+/// Signature with which parachain validators sign blocks.
 ///
 /// For now we assert that parachain validator set is exactly equivalent to the (Aura) authority set, and
 /// so we define it to be the same type as `SessionKey`. In the future it may have different crypto.
+/*
+parachain验证器签署块的签名
+*/
 pub type ValidatorSignature = super::SessionSignature;
 
 /// Identifier for a chain, either one of a number of parachains or the relay chain.
+/*
+链的身份标识符，可以是多个平行链中的一个或中继链。
+*/
 #[derive(Copy, Clone, PartialEq, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Chain {
 	/// The relay chain.
+	/*
+	中继链标识
+	*/
 	Relay,
 	/// A parachain of the given index.
+	/*
+	平行链的索引 (平行链ID)
+	*/
 	Parachain(Id),
 }
 
 /// The duty roster specifying what jobs each validator must do.
+/*
+职责的候选名单
+
+指定每个验证员必须完成的工作
+*/
 #[derive(Clone, PartialEq, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(Default, Debug))]
 pub struct DutyRoster {
 	/// Lookup from validator index to chain on which that validator has a duty to validate.
+	/*
+	从验证人索引到该验证器有责任验证的平行链的查找
+	*/
 	pub validator_duty: Vec<Chain>,
 }
 
 /// An outgoing message
+/*
+传出消息
+*/
 #[derive(Clone, PartialEq, Eq, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug))]
 #[cfg_attr(feature = "std", serde(rename_all = "camelCase"))]
 #[cfg_attr(feature = "std", serde(deny_unknown_fields))]
 pub struct OutgoingMessage {
 	/// The target parachain.
+	/*
+	目标 平行链ID
+	*/
 	pub target: Id,
 	/// The message data.
+	/*
+	消息 内容
+	*/
 	pub data: Vec<u8>,
 }
 
@@ -111,6 +141,11 @@ impl Ord for OutgoingMessage {
 ///
 /// This is data produced by evaluating the candidate. It contains
 /// full records of all outgoing messages to other parachains.
+/*
+Parachain候选者的外在数据
+
+这是通过评估候选人产生的数据。 它包含所有传出给其他链的消息的完整记录。
+*/
 #[derive(PartialEq, Eq, Clone, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug))]
 #[cfg_attr(feature = "std", serde(rename_all = "camelCase"))]
@@ -119,40 +154,78 @@ pub struct Extrinsic {
 	/// The outgoing messages from the execution of the parachain.
 	///
 	/// This must be sorted in ascending order by parachain ID.
+	/*
+	来自执行parachain的传出消息集
+
+	必须通过parachain ID按升序排序
+	*/
 	pub outgoing_messages: Vec<OutgoingMessage>
 }
 
 /// Candidate receipt type.
+/*
+候选收据类型
+*/
 #[derive(PartialEq, Eq, Clone, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct CandidateReceipt {
 	/// The ID of the parachain this is a candidate for.
+	/*
+	这个平行链的ID (该候选人所负责的 平行链)
+	*/
 	pub parachain_index: Id,
 	/// The collator's relay-chain account ID
+	/*
+	收集人的中继链帐户ID
+	*/
 	pub collator: CollatorId,
 	/// Signature on blake2-256 of the block data by collator.
+	/*
+	由collator使用(blake2-256)对块数据的签名
+	*/
 	pub signature: CollatorSignature,
 	/// The head-data
+	/*
+	head数据
+	*/
 	pub head_data: HeadData,
 	/// Balance uploads to the relay chain.
+	/*
+	余额上传到中继链
+	*/
 	pub balance_uploads: Vec<(super::AccountId, u64)>,
 	/// Egress queue roots. Must be sorted lexicographically (ascending)
 	/// by parachain ID.
+	/*
+	出口队列 root (出口队列是什么，请查看 polkadot的跨链设计 即懂)；  必须通过parachain ID按字典顺序（升序）排序
+	*/
 	pub egress_queue_roots: Vec<(Id, Hash)>,
 	/// Fees paid from the chain to the relay chain validators
+	/*
+	平行链支付给中继链验证人的费用
+	*/
 	pub fees: u64,
 	/// blake2-256 Hash of block data.
+	/*
+	区块的hash (blake2-256)
+	*/
 	pub block_data_hash: Hash,
 }
 
 impl CandidateReceipt {
 	/// Get the blake2_256 hash
+	/*
+	获取 当前候选人的 Hash (blake2-256)
+	*/
 	pub fn hash(&self) -> Hash {
 		use runtime_primitives::traits::{BlakeTwo256, Hash};
 		BlakeTwo256::hash_of(self)
 	}
 
 	/// Check integrity vs. provided block data.
+	/*
+	检查(签名)完整性与提供的块数据
+	*/
 	pub fn check_signature(&self) -> Result<(), ()> {
 		use runtime_primitives::traits::Verify;
 
@@ -209,6 +282,11 @@ pub struct Message(#[cfg_attr(feature = "std", serde(with="bytes"))] pub Vec<u8>
 /// This is an ordered vector of other parachains' egress queue roots,
 /// obtained according to the routing rules. The same parachain may appear
 /// twice.
+/*
+入口队列的root
+
+这是根据路由规则获得的其他链路的出口队列根的有序向量。 相同的parachain可能会出现两次。
+*/
 #[derive(Default, PartialEq, Eq, Clone, Encode)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug, Decode))]
 pub struct ConsolidatedIngressRoots(pub Vec<(Id, Hash)>);
@@ -249,6 +327,9 @@ impl BlockData {
 pub struct Header(#[cfg_attr(feature = "std", serde(with="bytes"))] pub Vec<u8>);
 
 /// Parachain head data included in the chain.
+/*
+被包含在 中继链的 平行链 head的数据(可以认为是一些 元数据)
+*/
 #[derive(PartialEq, Eq, Clone, PartialOrd, Ord, Encode, Decode)]
 #[cfg_attr(feature = "std", derive(Serialize, Deserialize, Debug))]
 pub struct HeadData(#[cfg_attr(feature = "std", serde(with="bytes"))] pub Vec<u8>);

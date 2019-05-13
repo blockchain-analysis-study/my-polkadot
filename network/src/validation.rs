@@ -309,14 +309,23 @@ impl Future for AwaitingCollation {
 	}
 }
 
+/*
+TODO 重要
+收集人的实现
+*/
 impl<P, E: Clone, N, T: Clone> Collators for ValidationNetwork<P, E, N, T> where
 	P: ProvideRuntimeApi + Send + Sync + 'static,
 	P::Api: ParachainHost<Block>,
 	N: NetworkService,
 {
+	// 定义了 两个类型别名
 	type Error = NetworkDown;
 	type Collation = AwaitingCollation;
 
+
+	/*
+	收集
+	*/
 	fn collate(&self, parachain: ParaId, relay_parent: Hash) -> Self::Collation {
 		let (tx, rx) = ::futures::sync::oneshot::channel();
 		self.network.with_spec(move |spec, _| {
@@ -326,7 +335,9 @@ impl<P, E: Clone, N, T: Clone> Collators for ValidationNetwork<P, E, N, T> where
 		AwaitingCollation{outer: rx, inner: None}
 	}
 
-
+	/*
+	记录 坏的 收集人Id
+	*/
 	fn note_bad_collator(&self, collator: CollatorId) {
 		self.network.with_spec(move |spec, ctx| spec.disconnect_bad_collator(ctx, collator));
 	}
@@ -416,6 +427,9 @@ pub(crate) fn incoming_message_topic(parent_hash: Hash, parachain: ParaId) -> Ha
 }
 
 /// A current validation session instance.
+/*
+当前验证会话实例
+*/
 #[derive(Clone)]
 pub(crate) struct ValidationSession {
 	parent_hash: Hash,
@@ -427,7 +441,13 @@ pub(crate) struct ValidationSession {
 impl ValidationSession {
 	/// Create a new validation session instance. Needs to be attached to the
 	/// nework.
+	/*
+	创建一个 新的验证会话实例
+	需要连接到网络
+	*/
 	pub(crate) fn new(params: SessionParams) -> Self {
+
+		// 实例化一个 验证会话实例
 		ValidationSession {
 			parent_hash: params.parent_hash,
 			knowledge: Arc::new(Mutex::new(Knowledge::new())),
@@ -438,17 +458,26 @@ impl ValidationSession {
 
 	/// Get a handle to the shared knowledge relative to this consensus
 	/// instance.
+	/*
+	获取与此共识实例相关的【共享知识】的句柄
+	*/
 	pub(crate) fn knowledge(&self) -> &Arc<Mutex<Knowledge>> {
 		&self.knowledge
 	}
 
 	/// Get a handle to the shared list of parachains' incoming data fetch.
+	/*
+	获取根据parachains传入数据获取的共享列表的句柄
+	*/
 	pub(crate) fn fetched_incoming(&self) -> &Arc<Mutex<FetchIncoming>> {
 		&self.fetch_incoming
 	}
 
 	// execute a closure with locally stored proof-of-validation for a candidate, or a slice of session identities
 	// we believe should have the data.
+	/*
+	使用本地存储的 候选人 【验证证明】 执行闭包，或者我们认为应该具有数据的会话标识。
+	*/
 	fn with_pov_block<F, U>(&self, hash: &Hash, f: F) -> U
 		where F: FnOnce(Result<&PoVBlock, &[ValidatorId]>) -> U
 	{

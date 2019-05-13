@@ -190,21 +190,40 @@ pub struct AttestedCandidate<Group, Candidate, AuthorityId, Signature> {
 }
 
 /// Stores votes and data about a candidate.
+/*
+TODO 重要
+存储有关候选人的投票和数据
+*/
 pub struct CandidateData<C: Context> {
+
+	// 候选人所属的 组
 	group_id: C::GroupId,
+	// 当前候选人的信息
 	candidate: C::Candidate,
+	// 候选人所得的 选票信息  map<权威Id, 票的状态>
 	validity_votes: HashMap<C::AuthorityId, ValidityVote<C::Signature>>,
+	// 收集 支出当前 候选人有问题的 权威Id 集
 	indicated_bad_by: Vec<C::AuthorityId>,
 }
 
+/*
+候选人数据的实现
+*/
 impl<C: Context> CandidateData<C> {
 	/// whether this has been indicated bad by anyone.
+	/*
+	是否被任何人指出是 有问题的 候选人
+	*/
 	pub fn indicated_bad(&self) -> bool {
 		!self.indicated_bad_by.is_empty()
 	}
 
 	/// Yield a full attestation for a candidate.
 	/// If the candidate can be included, it will return `Some`.
+	/*
+	为候选人提供完整的证明。
+	如果候选人可以被包括在内，它将返回“Some”。
+	*/
 	pub fn attested(&self, validity_threshold: usize)
 		-> Option<AttestedCandidate<
 			C::GroupId, C::Candidate, C::AuthorityId, C::Signature,
@@ -242,11 +261,17 @@ impl<C: Context> CandidateData<C> {
 	// Candidate data can be included in a proposal
 	// if it has enough validity votes
 	// and no authorities have called it bad.
+	/*
+	如果候选人数据具有足够的有效性投票并且没有 权威者称其为 有问题的，则候选人数据可以包含在提案中。
+	*/
 	fn can_be_included(&self, validity_threshold: usize) -> bool {
 		self.indicated_bad_by.is_empty()
 			&& self.validity_votes.len() >= validity_threshold
 	}
 
+	/*
+	获取摘要
+	*/
 	fn summary(&self, digest: C::Digest) -> Summary<C::Digest, C::GroupId> {
 		Summary {
 			candidate: digest,
@@ -258,7 +283,12 @@ impl<C: Context> CandidateData<C> {
 }
 
 // authority metadata
+/*
+权威元数据
+*/
 struct AuthorityData<C: Context> {
+
+	// 提案信息
 	proposal: Option<(C::Digest, C::Signature)>,
 }
 
@@ -393,6 +423,9 @@ impl<C: Context> Table<C> {
 	}
 
 	/// Get a candidate by digest.
+	/*
+	根据 摘要 获取候选人信息
+	*/
 	pub fn get_candidate(&self, digest: &C::Digest) -> Option<&C::Candidate> {
 		self.candidate_votes.get(digest).map(|d| &d.candidate)
 	}

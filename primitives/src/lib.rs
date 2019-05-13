@@ -82,6 +82,9 @@ pub type Hash = primitives::H256;
 pub type Nonce = u64;
 
 /// Signature with which authorities sign blocks.
+/*
+当局签署区块的签名。
+*/
 pub type SessionSignature = ed25519::Signature;
 
 /// Identity that authorities use.
