@@ -1,0 +1,48 @@
+[[bin]]
+name = "polkadot"
+path = "src/main.rs"
+
+[package]
+name = "polkadot"
+version = "0.4.0"
+authors = ["Parity Technologies <admin@parity.io>"]
+build = "build.rs"
+
+[dependencies]
+error-chain = "0.12"
+polkadot-cli = { path = "cli" }
+futures = "0.1"
+ctrlc = { version = "3.0", features = ["termination"] }
+
+[build-dependencies]
+vergen = "3"
+
+[workspace]
+members = [
+	"availability-store",
+	"cli",
+	"collator",
+	"erasure-coding",
+	"executor",
+	"network",
+	"primitives",
+	"runtime",
+	"service",
+	"statement-table",
+	"service",
+	"validation",
+
+	"test-parachains/adder",
+	"test-parachains/adder/collator",
+]
+exclude = [
+	"runtime/wasm",
+	"test-parachains/adder/wasm",
+]
+
+[badges]
+maintenance = { status = "actively-developed" }
+
+[profile.release]
+# Polkadot runtime requires unwinding.
+panic = "unwind"

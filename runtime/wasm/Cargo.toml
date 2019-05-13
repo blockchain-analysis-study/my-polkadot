@@ -1,0 +1,24 @@
+[package]
+name = "polkadot-runtime-wasm"
+version = "0.1.0"
+authors = ["Parity Technologies <admin@parity.io>"]
+
+[lib]
+name = "polkadot_runtime"
+crate-type = ["cdylib"]
+
+[dependencies]
+polkadot-runtime = { path = "..", default-features = false }
+
+[features]
+default = []
+std = [
+	"polkadot-runtime/std",
+]
+
+[profile.release]
+panic = "abort"
+lto = true
+
+[workspace]
+members = []
