@@ -150,7 +150,15 @@ impl PolkadotService for Service<LightComponents<Factory>> {
 		Service::transaction_pool(self)
 	}
 }
+/*
+TODO 重要的入口
 
+这个和Substrate中类似
+
+调用 宏
+创建 对应的 服务实例
+fullNode 或者 lightNode
+*/
 construct_service_factory! {
 	struct Factory {
 		Block = Block,
@@ -165,6 +173,12 @@ construct_service_factory! {
 			{ |config, client| Ok(TransactionPool::new(config, TxChainApi::new(client))) },
 		Genesis = GenesisConfig,
 		Configuration = CustomConfiguration,
+
+		/*
+		全节点的定义
+
+		fullNode
+		*/
 		FullService = FullComponents<Self>
 			{ |config: FactoryFullConfiguration<Self>, executor: TaskExecutor| {
 				FullComponents::<Factory>::new(config, executor)
@@ -305,6 +319,12 @@ construct_service_factory! {
 				executor.spawn(task);
 				Ok(service)
 			}},
+
+		/*
+		轻节点的定义
+
+		lightNode
+		*/
 		LightService = LightComponents<Self>
 			{ |config, executor| <LightComponents<Factory>>::new(config, executor) },
 		FullImportQueue = AuraImportQueue<

@@ -472,6 +472,9 @@ impl<T: Trait> ProvideInherent for Module<T> {
 	}
 }
 
+/*
+这是一个 测试 mod
+*/
 #[cfg(test)]
 mod tests {
 	use super::*;
@@ -561,21 +564,34 @@ mod tests {
 		t.into()
 	}
 
+	/*
+	创建 认证
+
+	入参为 认证候选人
+	*/
 	fn make_attestations(candidate: &mut AttestedCandidate) {
 		let mut vote_implicit = false;
+
+		// 父区块 Hash
 		let parent_hash = ::System::parent_hash();
 
+		// 职责名单? 考勤表 ?
+		// 计算出 职责名单 (验证人名单 ??)
 		let duty_roster = Parachains::calculate_duty_roster();
+
+		// 候选人 Hash
 		let candidate_hash = candidate.candidate.hash();
 
+		// 由共识中获取 权威人集(出块人 ??)
 		let authorities = ::Consensus::authorities();
 		let extract_key = |public: SessionKey| {
 			AuthorityKeyring::from_raw_public(public.0).unwrap()
 		};
-
+		// 验证人? 迭代器
 		let validation_entries = duty_roster.validator_duty.iter()
 			.enumerate();
 
+		// 遍历
 		for (idx, &duty) in validation_entries {
 			if duty != Chain::Parachain(candidate.parachain_index()) { continue }
 			vote_implicit = !vote_implicit;

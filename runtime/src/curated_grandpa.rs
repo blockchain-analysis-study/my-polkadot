@@ -32,10 +32,17 @@ decl_storage! {
 	}
 }
 
+/*
+
+TODO Polkadot的GRANDPA协议
+*/
 decl_module! {
 	/// curated GRANDPA set.
 	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 		/// Changes the GRANDPA voter set.
+		/*
+		更改 爷爷的 票集
+		*/
 		fn set_voters(origin, voters: Vec<(T::SessionKey, u64)>) {
 			system::ensure_root(origin)?;
 			grandpa::Module::<T>::schedule_change(voters, T::BlockNumber::zero(), None)?;
@@ -43,13 +50,22 @@ decl_module! {
 
 		fn on_finalize(block_number: T::BlockNumber) {
 			// every so often shuffle the voters and issue a change.
+			//
+			// TODO 重要
+			// 每隔一段时间就会使选民洗牌并发布变化
 			let shuffle_period: u64 = Self::shuffle_period().as_();
 			if shuffle_period == 0 { return }
 
+            // 判断 区块num 和 洗牌周期
 			if block_number.as_() % shuffle_period == 0 {
+
+			    // 获取 grandpa 协议中的 所有权威投票
 				let mut voters = grandpa::Module::<T>::grandpa_authorities();
+
+				// 票的张数
 				let voter_count = voters.len();
 
+                // 如果没有投票，则直接返回
 				if voter_count == 0 { return }
 
 				let mut seed = {

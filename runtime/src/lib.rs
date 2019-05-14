@@ -46,7 +46,10 @@ extern crate sr_io;
 extern crate sr_version as version;
 #[macro_use]
 extern crate sr_primitives;
-
+/*
+TODO 重要
+TODO 这些都是直接引用了  SUbstrate 的库
+*/
 #[macro_use]
 extern crate srml_support;
 extern crate srml_aura as aura;
@@ -189,6 +192,9 @@ impl session::Trait for Runtime {
 }
 
 /// Converter for currencies to votes.
+/*
+转换为货币投票
+*/
 pub struct CurrencyToVoteHandler;
 
 impl CurrencyToVoteHandler {
