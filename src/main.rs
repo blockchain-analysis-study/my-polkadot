@@ -60,6 +60,9 @@ impl cli::Worker for Worker {
 	}
 }
 
+/*
+Polkadot的主入口
+*/
 quick_main!(run);
 
 fn run() -> cli::error::Result<()> {
@@ -72,5 +75,8 @@ fn run() -> cli::error::Result<()> {
 		description: "Polkadot Relay-chain Client Node",
 		support_url: "https://github.com/paritytech/polkadot/issues/new",
 	};
+	// 返回 Result
+	//
+	// 这里这个 Worker 我并没有看到有实例化的地方啊
 	cli::run(::std::env::args(), Worker, version)
 }

@@ -102,6 +102,9 @@ pub type TxChainApi<Backend, Executor> = transaction_pool::ChainApi<
 >;
 
 /// Provides polkadot types.
+/*
+TODO 定义 Polkadot Servce 的类型
+*/
 pub trait PolkadotService {
 	/// The client's backend type.
 	type Backend: 'static + client::backend::Backend<Block, Blake2Hasher>;
@@ -118,6 +121,7 @@ pub trait PolkadotService {
 	fn transaction_pool(&self) -> Arc<TransactionPool<TxChainApi<Self::Backend, Self::Executor>>>;
 }
 
+// TODO 一个 Full Node 的实现
 impl PolkadotService for Service<FullComponents<Factory>> {
 	type Backend = <FullComponents<Factory> as Components>::Backend;
 	type Executor = <FullComponents<Factory> as Components>::Executor;
@@ -134,6 +138,7 @@ impl PolkadotService for Service<FullComponents<Factory>> {
 	}
 }
 
+// TODO 一个 Light node 的实现
 impl PolkadotService for Service<LightComponents<Factory>> {
 	type Backend = <LightComponents<Factory> as Components>::Backend;
 	type Executor = <LightComponents<Factory> as Components>::Executor;
@@ -151,13 +156,17 @@ impl PolkadotService for Service<LightComponents<Factory>> {
 	}
 }
 /*
-TODO 重要的入口
+TODO 重要的入口  节点的实例定义
 
 这个和Substrate中类似
 
 调用 宏
 创建 对应的 服务实例
 fullNode 或者 lightNode
+
+TODO 这里是调用了一个 宏； 该宏的模式匹配中定义了 new_light() 和 new_full()
+
+TODO 该 宏， 被定义在 Substrate 的service 模块中
 */
 construct_service_factory! {
 	struct Factory {

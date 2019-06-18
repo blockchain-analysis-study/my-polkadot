@@ -24,6 +24,7 @@ substrate-client = { git = "https://github.com/paritytech/substrate", branch = "
 substrate-consensus-aura = { git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }
 substrate-finality-grandpa = { git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }
 substrate-inherents = { git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }
+# 引入模块：去 Substrate中找 name定义为： substrate-service 的Cargo.toml
 substrate-service = { git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }
 substrate-telemetry = { git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }
 substrate-transaction-pool = { git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }

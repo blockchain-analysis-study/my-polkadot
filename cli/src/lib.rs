@@ -79,11 +79,15 @@ pub trait Worker: IntoExit {
 /// 9556-9591		Unassigned
 /// 9803-9874		Unassigned
 /// 9926-9949		Unassigned
+/*
+TODO Polkadot run
+*/
 pub fn run<I, T, W>(args: I, worker: W, version: cli::VersionInfo) -> error::Result<()> where
 	I: IntoIterator<Item = T>,
 	T: Into<std::ffi::OsString> + Clone,
 	W: Worker,
 {
+	// 解析 命令行，并执行
 	cli::parse_and_execute::<service::Factory, NoCustom, NoCustom, _, _, _, _, _>(
 		load_spec, &version, "parity-polkadot", args, worker,
 		|worker, _cli_args, _custom_args, mut config| {
@@ -93,16 +97,26 @@ pub fn run<I, T, W>(args: I, worker: W, version: cli::VersionInfo) -> error::Res
 			info!("Chain specification: {}", config.chain_spec.name());
 			info!("Node name: {}", config.name);
 			info!("Roles: {:?}", config.roles);
+
+			// 加载 worker 的配置
 			config.custom = worker.configuration();
 			let runtime = Runtime::new().map_err(|e| format!("{:?}", e))?;
+
+			// 获得一个 执行器实例
 			let executor = runtime.executor();
+
+			// 模式匹配 节点启动的配置模式
 			match config.roles {
+
+				// light 节点
 				service::Roles::LIGHT =>
 					run_until_exit(
 						runtime,
 						Factory::new_light(config, executor).map_err(|e| format!("{:?}", e))?,
 						worker
 					),
+
+				// 其他类型的节点
 				_ => run_until_exit(
 						runtime,
 						Factory::new_full(config, executor).map_err(|e| format!("{:?}", e))?,
@@ -113,9 +127,17 @@ pub fn run<I, T, W>(args: I, worker: W, version: cli::VersionInfo) -> error::Res
 	).map_err(Into::into).map(|_| ())
 }
 
+
+// 节点执行
 fn run_until_exit<T, C, W>(
+
+	// 一个 runtime 入参
 	mut runtime: Runtime,
+
+	// 这个才是 node的真正实例
 	service: T,
+
+	// 一个worker 入参
 	worker: W,
 ) -> error::Result<()>
 	where
