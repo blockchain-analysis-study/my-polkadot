@@ -14,6 +14,10 @@
 //! propose and attest to validity of candidates, and those who can only attest
 //! to availability.
 
+/*
+TODO 共识相关的存储表
+*/
+
 extern crate parity_codec as codec;
 extern crate substrate_primitives;
 extern crate polkadot_primitives as primitives;

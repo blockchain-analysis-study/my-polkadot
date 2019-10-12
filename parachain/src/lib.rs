@@ -40,6 +40,10 @@
 //! The `wasm_api` module (enabled only with the wasm-api feature) provides utilities
 //!  for setting up a parachain WASM module in Rust.
 
+/*
+TODO 平行链编译相关，包手一些数据类型的处理
+*/
+
 #![cfg_attr(not(feature = "std"), no_std)]
 
 /// Re-export of parity-codec.

@@ -83,6 +83,8 @@ pub type Nonce = u64;
 
 /// Signature with which authorities sign blocks.
 /*
+TODO 平行链相关的数据基础类型
+
 当局签署区块的签名。
 */
 pub type SessionSignature = ed25519::Signature;

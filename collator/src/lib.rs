@@ -44,6 +44,10 @@
 //! This crate defines traits which provide context necessary for collation logic
 //! to be performed, as the collation logic itself.
 
+/*
+TODO 这个才真正是 收集人 的代码
+*/
+
 extern crate futures;
 extern crate substrate_client as client;
 extern crate parity_codec as codec;

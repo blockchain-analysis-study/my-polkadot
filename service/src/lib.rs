@@ -16,6 +16,9 @@
 
 //! Polkadot service. Specialized wrapper over substrate service.
 
+/*
+波卡链对网络的控制逻辑，包括通信、线程及网络之间的组织关系
+*/
 extern crate polkadot_availability_store as av_store;
 extern crate polkadot_validation as consensus;
 extern crate polkadot_primitives;

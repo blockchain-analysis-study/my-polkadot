@@ -16,6 +16,10 @@
 
 //! The Polkadot runtime reexported for WebAssembly compile.
 
+/*
+TODO 相关WASM的处理
+*/
+
 #![cfg_attr(not(feature = "std"), no_std)]
 
 extern crate polkadot_runtime;

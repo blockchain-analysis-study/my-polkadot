@@ -35,6 +35,9 @@ use futures::prelude::*;
 /// Encapsulates connections to collators and allows collation on any parachain.
 ///
 /// This is expected to be a lightweight, shared type like an `Arc`.
+/*
+TODO 这个就是polkadot四种角色之一的 收集人 collator
+*/
 pub trait Collators: Clone {
 	/// Errors when producing collations.
 	type Error: std::fmt::Debug;
@@ -57,6 +60,11 @@ pub trait Collators: Clone {
 /// A future which resolves when a collation is available.
 ///
 /// This future is fused.
+/*
+排序规则可用时解决的未来
+
+未来被融合了
+*/
 pub struct CollationFetch<C: Collators, P> {
 	parachain: ParaId,
 	relay_parent_hash: Hash,
@@ -66,12 +74,22 @@ pub struct CollationFetch<C: Collators, P> {
 	client: Arc<P>,
 }
 
+/*
+收集人集的实现
+*/
 impl<C: Collators, P> CollationFetch<C, P> {
 	/// Create a new collation fetcher for the given chain.
+	/*
+	 为给平行链创建一个新的 收集人集
+	*/
 	pub fn new(
+		// 平行链的Id
 		parachain: ParaId,
+		// 加入 中继链时的中继链的某个块 parentHash
 		relay_parent_hash: Hash,
+		// 所有该平行链的收集人
 		collators: C,
+		// 客户端 ??
 		client: Arc<P>,
 	) -> Self {
 		CollationFetch {

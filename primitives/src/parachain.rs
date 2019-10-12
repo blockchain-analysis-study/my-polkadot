@@ -283,6 +283,8 @@ pub struct Message(#[cfg_attr(feature = "std", serde(with="bytes"))] pub Vec<u8>
 /// obtained according to the routing rules. The same parachain may appear
 /// twice.
 /*
+TODO 平行链相关的数据基础类型
+
 入口队列的root
 
 这是根据路由规则获得的其他链路的出口队列根的有序向量。 相同的parachain可能会出现两次。

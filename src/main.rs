@@ -16,7 +16,9 @@
 
 //! Polkadot CLI
 /*
-基于 polkadot v 0.4.4版本分析的
+TODO 基于 polkadot v 0.4.4版本分析的
+TODO 入口
+很简单的启动命令客户端
 */
 #![warn(missing_docs)]
 
